@@ -1,0 +1,16 @@
+{
+    "name": "content_parser",
+    "version": "0.0.1",
+    "description": "news aggregator",
+    "main": "index.js",
+    "scripts": {
+        "start": "xvfb-run --server-args=\"-screen 0 1024x768x24\" node index.js",
+        "start_debug": "DEBUG=nightmare:*,electron:* xvfb-run --server-args=\"-screen 0 1024x768x24\" node index.js",
+        "test": "test"
+    },
+    "author": "cytidd",
+    "licence": "MIT",
+    "dependencies": {
+        "nightmare": "^2.10.0"
+    }
+}
