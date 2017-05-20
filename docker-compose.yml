@@ -9,3 +9,13 @@ services:
     volumes:
       - "./:/usr/src/app"
     command: "npm start"
+
+  tester:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./:/usr/src/app"
+    command: "npm test"
