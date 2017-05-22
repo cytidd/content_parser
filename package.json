@@ -11,6 +11,8 @@
   "author": "cytidd",
   "licence": "MIT",
   "dependencies": {
+    "aws-sdk": "^2.54.0",
+    "md5": "^2.2.1",
     "nightmare": "^2.10.0"
   },
   "devDependencies": {
