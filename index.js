@@ -14,12 +14,11 @@ AWS.config.update({
 var dynamodb = new AWS.DynamoDB();
 
 /**
- * parseCategory
  *
  * @param {*} category
  * @param {*} categoryArray
  *
- * returns an array of items formatted for a DynamoDB insert
+ * Return an array of items formatted for a DynamoDB insert
  */
 var parseCategory = function(category, categoryArray) {
     var items = [],
@@ -66,6 +65,18 @@ var parseCategory = function(category, categoryArray) {
     return items;
 }
 
+/**
+ * 
+ * @param {*} item
+ * @param {*} hash
+ *
+ * Return false if:
+ *  - title or url is of 0 length, or
+ *  - hash is in currentHashes
+ *  - item.url has more than one occurence of "http"
+ *
+ * otherwise true
+ */
 var isValidItem = function(item, hash) {
     if(item.title.length === 0 ||
         item.url.length === 0 ||
@@ -77,6 +88,12 @@ var isValidItem = function(item, hash) {
     }
 }
 
+/**
+ * 
+ * @param {*} items
+ *
+ * Split items into groups of max 25 items
+ */
 var splitBatch = function(items) {
     var groups = [],
         size = 25;
@@ -89,6 +106,12 @@ var splitBatch = function(items) {
     return groups;
 }
 
+/**
+ * 
+ * @param {*} items
+ *
+ * Perform a batch write to DynamoDb
+ */
 var batchWrite = function(items) {
     return new Promise((resolve, reject) => {
         if(!items) {
@@ -114,6 +137,12 @@ var batchWrite = function(items) {
     });
 }
 
+/**
+ * 
+ * @param {*} items
+ *
+ * Splits item results and perform batch writes
+ */
 var batchWriteItems = function(items) {
 
     return new Promise((resolve, reject) => {
@@ -136,6 +165,9 @@ var batchWriteItems = function(items) {
     });
 }
 
+/**
+ *  Fetch the current item hashes from DynamoDB
+ */
 var fetchHashes = function() {
     return new Promise((resolve, reject) => {
         dynamodb.scan({
@@ -159,6 +191,12 @@ var setCurrentHashes = function(hashes) {
     return Promise.resolve();
 }
 
+/**
+ * 
+ * @param {*} items
+ *
+ * Gather items from each parse action into a common place
+ */
 var gatherResults = function(items) {
     if(typeof(items) !== 'undefined') {
         var keys = Object.keys(items);
