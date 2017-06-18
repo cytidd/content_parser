@@ -1,8 +1,10 @@
 var cnn = require('./parsers/cnn.js'),
+    washpost = require('./parsers/washpost.js'),
     md5 = require('md5'),
     AWS = require('aws-sdk'),
     tableName = "content_parser_links",
-    currentHashes = [];
+    currentHashes = [],
+    putItems = [];
 
 AWS.config.update({
     region: 'us-east-1',
@@ -89,12 +91,17 @@ var splitBatch = function(items) {
 
 var batchWrite = function(items) {
     return new Promise((resolve, reject) => {
+        if(!items) {
+            reject('items is null');
+        }
         if(items.length < 1 || items.length > 25) {
             reject('batchWrite items.length is' + items.length +', must be between 1 and 25');
         }
 
         var params = { RequestItems: {} };
         params.RequestItems[tableName] = items;
+
+        console.log('batch writing ' + items.length + ' items.');
 
         dynamodb.batchWriteItem(params, (err, data) => {
             console.log(err, data);
@@ -110,6 +117,10 @@ var batchWrite = function(items) {
 var batchWriteItems = function(items) {
 
     return new Promise((resolve, reject) => {
+
+        if(typeof(items) === 'undefined') {
+            reject('items is undefined');
+        }
 
         var batches = splitBatch(items);
         var batchCalls = [];
@@ -143,21 +154,27 @@ var fetchHashes = function() {
     })
 }
 
-fetchHashes()
-.then(function(hashes){
+var setCurrentHashes = function(hashes) {
     currentHashes = hashes;
-    return cnn.parseCNN();
-})
-.then(result => {
+    return Promise.resolve();
+}
 
-    var putItems = [];
-    var keys = Object.keys(result);
-    keys.forEach(key => {
-        putItems = putItems.concat(parseCategory(key, result[key]));
-    });
-
+var gatherResults = function(items) {
+    if(typeof(items) !== 'undefined') {
+        var keys = Object.keys(items);
+        keys.forEach(key => {
+            putItems = putItems.concat(parseCategory(key, items[key]));
+        });
+    }
     return putItems;
-})
+}
+
+fetchHashes()
+.then(setCurrentHashes)
+.then(cnn.parseCNN)
+.then(gatherResults)
+.then(washpost.parseWashingtonPost)
+.then(gatherResults)
 .then(batchWriteItems)
 .then(result => {
     if(result) {
@@ -165,5 +182,5 @@ fetchHashes()
     }
 })
 .catch(error => {
-    console.log('Error', error);
+    console.log('Whoops: ', error);
 });
