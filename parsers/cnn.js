@@ -34,7 +34,7 @@ exports.parseCNN = function() {
                 }
 
                 var title = (headline ? headline.textContent.trim() : ""),
-                    uri = article.getAttribute(selectors.ARTICLE_URI);
+                    uri = article.getAttribute(selectors.ARTICLE_URI) || "";
 
                 // skip items with no title or uri
                 if(title.length > 0 && uri.length > 0) {
