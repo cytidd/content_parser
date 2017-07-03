@@ -11,11 +11,11 @@ build:
 run:
 	docker-compose run --rm ${PARSER}
 
-login:
-	docker login -u ${CP_DOCKER_USERNAME} -p "${CP_DOCKER_PASSWORD}"
-
 unit-tests:
 	docker-compose run --rm ${TESTER}
+
+login:
+	docker login -u ${CP_DOCKER_USERNAME} -p "${CP_DOCKER_PASSWORD}"
 
 push:
 	docker push ${DOCKER_IMAGE}
