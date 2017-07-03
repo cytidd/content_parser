@@ -2,13 +2,9 @@ var cnn = require('./parsers/cnn.js'),
     washpost = require('./parsers/washpost.js'),
     md5 = require('md5'),
     AWS = require('aws-sdk'),
-    tableName = process.env.DYNAMODB_TABLE_NAME,
+    tableName = process.env.DYNAMODB_TABLE_NAME || "this_table_should_not_exist",
     currentHashes = [],
     putItems = [];
-
-if(tableName.length === 0) {
-    throw new Error("ERROR: tableName has zero length");
-}
 
 AWS.config.update({
     region: 'us-east-1',
