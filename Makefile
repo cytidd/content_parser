@@ -1,7 +1,6 @@
 PARSER_VERSION=latest
 PARSER=content_parser
 TESTER=tester
-USERNAME=$(shell whoami)
 DOCKER_IMAGE=${CP_DOCKER_USERNAME}/content_parser:${PARSER_VERSION}
 
 parse: build run
