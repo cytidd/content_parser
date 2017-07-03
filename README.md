@@ -2,40 +2,65 @@
 
 [![CircleCI](https://circleci.com/gh/cytidd/content_parser/tree/master.svg?style=svg)](https://circleci.com/gh/cytidd/content_parser/tree/master)
 
-Parses news websites and writes new links to a DynamoDB table.  Uses [Docker](https://www.docker.com/) and [Nightmare](https://github.com/segmentio/nightmare).
+Parses news websites and writes new links to a database.  Demonstrates use of automated infrastructure.
+
+Primary technologies used:
+- [Amazon AWS](https://aws.amazon.com/)
+- [Terraform](https://www.terraform.io/)
+- [Docker](https://www.docker.com/)
+- [Nightmare](https://github.com/segmentio/nightmare)
 
 ### sites currently parsing
 - CNN
 - Washington Post
 
-### parser setup
+### major todos
+This is a work in progress. Stuff I would like to add:
+- enable running container in ECS
+- generate API Gateway resources to read links from db
 
-Two environment variables:
+### setup
+
+Clone this repo:
+```bash
+git clone git@github.com:cytidd/content_parser.git
+```
+
+Setup AWS infrastructure via [Terraform](https://www.terraform.io/). Requires an [AWS account](https://aws.amazon.com/).
+
+Required environment variables:
 ```bash
 CP_AWS_ACCESS_KEY_ID
 CP_AWS_SECRET_ACCESS_KEY
 ```
 
-A DynamoDB table named `content_parser_links` with the following schema:
-```
-    Item: {
-        "hash": S (primary key),
-        "parseDate": S,
-        "source": S,
-        "title": S,
-        "url": S,
-        "category": S,
-        "read": BOOL
-    }
-```
-
-TODO: Include a Terraform module that does the Dynamo setup.
-
-### run
+To instantiate the AWS infrastructure:
 ```bash
-git clone git@github.com:cytidd/content_parser.git .
+make plan   # to see what Terraform will do
+make apply  # to create resources (DynamoDB table)
+```
+
+### running
+
+Build and run:
+```bash
 make
 ```
+
+Just run (refrains from rebuilding the container):
+```bash
+make run
+```
+
+### destroy
+
+**WARNING:** THIS WILL DESTROY THE DB TABLE AND ALL CONTENT YOU HAVE CREATED.
+
+Use Terraform to destroy resources (it will ask you for confirmation):
+```bash
+make destroy
+```
+
 
 ### docker setup
 
@@ -52,3 +77,4 @@ To push:
 make login
 make push
 ```
+

@@ -7,6 +7,7 @@ services:
     environment:
       - "AWS_ACCESS_KEY_ID=${CP_AWS_ACCESS_KEY_ID}"
       - "AWS_SECRET_ACCESS_KEY=${CP_AWS_SECRET_ACCESS_KEY}"
+      - "DYNAMODB_TABLE_NAME=${CP_DYNAMODB_TABLE_NAME}"
     ports:
       - "3000:3000"
     volumes:
