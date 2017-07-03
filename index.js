@@ -13,6 +13,26 @@ AWS.config.update({
 
 var dynamodb = new AWS.DynamoDB();
 
+
+// Do the Thing.
+fetchHashes()
+.then(setCurrentHashes)
+.then(cnn.parseCNN)
+.then(gatherResults)
+.then(washpost.parseWashingtonPost)
+.then(gatherResults)
+.then(batchWriteItems)
+.then(result => {
+    if(result) {
+        console.log(result);
+    }
+})
+.catch(error => {
+    console.log('Whoops: ', error);
+});
+
+
+
 /**
  *
  * @param {*} category
@@ -20,7 +40,7 @@ var dynamodb = new AWS.DynamoDB();
  *
  * Return an array of items formatted for a DynamoDB insert
  */
-var parseCategory = function(category, categoryArray) {
+function parseCategory(category, categoryArray) {
     var items = [],
         today = Date.now().toString(),
         category = (category === 'null' ? 'none' : category);
@@ -77,7 +97,7 @@ var parseCategory = function(category, categoryArray) {
  *
  * otherwise true
  */
-var isValidItem = function(item, hash) {
+function isValidItem(item, hash) {
     if(item.title.length === 0 ||
         item.url.length === 0 ||
         currentHashes.indexOf(hash) >= 0 ||
@@ -94,7 +114,7 @@ var isValidItem = function(item, hash) {
  *
  * Split items into groups of max 25 items
  */
-var splitBatch = function(items) {
+function splitBatch(items) {
     var groups = [],
         size = 25;
 
@@ -112,7 +132,7 @@ var splitBatch = function(items) {
  *
  * Perform a batch write to DynamoDb
  */
-var batchWrite = function(items) {
+function batchWrite(items) {
     return new Promise((resolve, reject) => {
         if(!items) {
             reject('items is null');
@@ -143,7 +163,7 @@ var batchWrite = function(items) {
  *
  * Splits item results and perform batch writes
  */
-var batchWriteItems = function(items) {
+function batchWriteItems(items) {
 
     return new Promise((resolve, reject) => {
 
@@ -168,7 +188,7 @@ var batchWriteItems = function(items) {
 /**
  *  Fetch the current item hashes from DynamoDB
  */
-var fetchHashes = function() {
+function fetchHashes() {
     return new Promise((resolve, reject) => {
         dynamodb.scan({
             TableName: tableName,
@@ -186,7 +206,7 @@ var fetchHashes = function() {
     })
 }
 
-var setCurrentHashes = function(hashes) {
+function setCurrentHashes(hashes) {
     currentHashes = hashes;
     return Promise.resolve();
 }
@@ -197,7 +217,7 @@ var setCurrentHashes = function(hashes) {
  *
  * Gather items from each parse action into a common place
  */
-var gatherResults = function(items) {
+function gatherResults(items) {
     if(typeof(items) !== 'undefined') {
         var keys = Object.keys(items);
         keys.forEach(key => {
@@ -206,19 +226,3 @@ var gatherResults = function(items) {
     }
     return putItems;
 }
-
-fetchHashes()
-.then(setCurrentHashes)
-.then(cnn.parseCNN)
-.then(gatherResults)
-.then(washpost.parseWashingtonPost)
-.then(gatherResults)
-.then(batchWriteItems)
-.then(result => {
-    if(result) {
-        console.log(result);
-    }
-})
-.catch(error => {
-    console.log('Whoops: ', error);
-});
