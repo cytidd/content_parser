@@ -2,6 +2,7 @@ PARSER_VERSION=latest
 PARSER=content_parser
 TESTER=tester
 DOCKER_IMAGE=${CP_DOCKER_USERNAME}/content_parser:${PARSER_VERSION}
+AWS_REGION=us-east-1
 
 parse: build run
 
@@ -23,10 +24,10 @@ push:
 
 # Terraform
 plan:
-	./runscripts/do-terraform.sh plan
+	./runscripts/do-terraform.sh plan ${AWS_REGION}
 
 apply:
-	./runscripts/do-terraform.sh apply
+	./runscripts/do-terraform.sh apply ${AWS_REGION}
 
 destroy:
-	./runscripts/do-terraform.sh destroy
+	./runscripts/do-terraform.sh destroy ${AWS_REGION}

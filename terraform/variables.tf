@@ -5,3 +5,4 @@ variable "aws_region" {
 }
 
 variable "dynamodb_table_name" {}
+variable "api_gateway_api_name" {}

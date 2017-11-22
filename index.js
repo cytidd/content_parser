@@ -7,7 +7,7 @@ var cnn = require('./parsers/cnn.js'),
     putItems = [];
 
 AWS.config.update({
-    region: 'us-east-1',
+    region: process.env.AWS_REGION || 'us-east-1',
     verifySSL: false // because Docker
 });
 
