@@ -17,7 +17,13 @@ Primary technologies used:
 ### major todos
 This is a work in progress. Stuff I would like to add:
 - enable running container in ECS
-- generate API Gateway resources to read links from db
+- generate API Gateway resources with Terraform
+
+### Prerequisites
+- [Docker](https://www.docker.com/)
+    - this project uses `docker-compose` version 3
+- An Amazon [AWS account](https://aws.amazon.com/)
+- [Terraform](https://www.terraform.io/)
 
 ### setup
 
