@@ -40,6 +40,13 @@ CP_AWS_ACCESS_KEY_ID
 CP_AWS_SECRET_ACCESS_KEY
 ```
 
+First time setup:
+```
+cd terraform
+terraform init
+cd ..
+```
+
 To instantiate the AWS infrastructure:
 ```bash
 make plan   # to see what Terraform will do

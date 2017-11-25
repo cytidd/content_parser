@@ -6,4 +6,6 @@ xvfb*
 
 # Terraform
 *.tfvars
-*.tfstate*
+*.tfstate
+
+terraform/.terraform/
